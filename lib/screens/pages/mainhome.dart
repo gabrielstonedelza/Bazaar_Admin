@@ -48,6 +48,7 @@ class _MainHomeState extends State<MainHome> {
 
   void scheduleTimers() {
     profileController.getMyProfile(uToken);
+    profileController.getAllDrivers(uToken);
     orderController.getAllOrders(uToken);
     orderController.getAllPendingOrders(uToken);
     orderController.getAllProcessingOrders(uToken);
@@ -58,6 +59,7 @@ class _MainHomeState extends State<MainHome> {
     notificationController.getAllNotifications(uToken);
     Timer.periodic(const Duration(seconds: 3), (Timer timer) {
       profileController.getMyProfile(uToken);
+      profileController.getAllDrivers(uToken);
       orderController.getAllOrders(uToken);
       orderController.getAllPendingOrders(uToken);
       orderController.getAllProcessingOrders(uToken);

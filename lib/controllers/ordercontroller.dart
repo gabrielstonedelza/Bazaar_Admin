@@ -299,7 +299,6 @@ class OrderController extends GetxController {
     if (response.statusCode == 201) {
       update();
     } else {
-      print(response.body);
       Get.snackbar(
         "Order Error",
         "Something went wrong",
@@ -356,6 +355,99 @@ class OrderController extends GetxController {
       print(response.body);
       Get.snackbar(
         "Order Error",
+        "Something went wrong",
+        duration: const Duration(seconds: 5),
+        colorText: defaultTextColor1,
+        backgroundColor: warning,
+      );
+    }
+  }
+
+//   assign a driver
+  Future<void> assignDriverToOrder(
+      String id,
+      String token,
+      String cartId,
+      String quantity,
+      String price,
+      String category,
+      String size,
+      String paymentMethod,
+      String dropOffLat,
+      String dropOffLng,
+      String deliveryMethod,
+      String unCode,
+      String driver) async {
+    final requestUrl = "https://f-bazaar.com/order/order/$id/update/";
+    final myLink = Uri.parse(requestUrl);
+    final response = await http.put(myLink, headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      'Accept': 'application/json',
+      "Authorization": "Token $token"
+    }, body: {
+      "cart": cartId,
+      "quantity": quantity,
+      "category": category,
+      "size": size,
+      "payment_method": paymentMethod,
+      "delivery_method": deliveryMethod,
+      "drop_off_location_lat": dropOffLat,
+      "drop_off_location_lng": dropOffLng,
+      "price": price,
+      "ordered": "True",
+      "order_status": "Processing",
+      "unique_order_code": unCode,
+      "assigned_driver": driver,
+    });
+    if (response.statusCode == 200) {
+      clearOrder(token, id);
+      Get.snackbar("Hurray 😀", "driver has been assigned to order",
+          colorText: defaultTextColor1,
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: newDefault,
+          duration: const Duration(seconds: 5));
+      assignOrderToDriver(token, id, driver);
+      update();
+    } else {
+      Get.snackbar(
+        "Order Error",
+        "Something went wrong",
+        duration: const Duration(seconds: 5),
+        colorText: defaultTextColor1,
+        backgroundColor: warning,
+      );
+    }
+  }
+
+  Future<void> assignOrderToDriver(
+    String token,
+    String orderItem,
+    String driver,
+  ) async {
+    final requestUrl =
+        "https://f-bazaar.com/order/assign_driver_to_order/$orderItem/";
+    final myLink = Uri.parse(requestUrl);
+    final response = await http.post(myLink, headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      'Accept': 'application/json',
+      "Authorization": "Token $token"
+    }, body: {
+      "order_item": orderItem,
+      "driver": driver,
+    });
+    if (response.statusCode == 201) {
+      Get.snackbar(
+        "Success",
+        "Driver will get a notification regarding this assigned order",
+        duration: const Duration(seconds: 5),
+        colorText: defaultTextColor1,
+        backgroundColor: newDefault,
+      );
+      Get.back();
+      update();
+    } else {
+      Get.snackbar(
+        "Assignment Error",
         "Something went wrong",
         duration: const Duration(seconds: 5),
         colorText: defaultTextColor1,

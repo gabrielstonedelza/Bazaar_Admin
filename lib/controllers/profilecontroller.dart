@@ -13,6 +13,8 @@ class ProfileController extends GetxController {
   late String phoneNumber = "";
   late String userId = "";
 
+  late List allDrivers = [];
+
   Future<void> getMyProfile(String token) async {
     const profileLink = "https://f-bazaar.com/profile/profile/";
     var link = Uri.parse(profileLink);
@@ -28,6 +30,24 @@ class ProfileController extends GetxController {
       username = jsonData['get_username'];
       profilePicture = jsonData['get_profile_pic'];
       phoneNumber = jsonData['get_phone'];
+      update();
+    } else {
+      if (kDebugMode) {
+        print(response.body);
+      }
+    }
+  }
+
+  Future<void> getAllDrivers(String token) async {
+    const profileLink = "https://f-bazaar.com/users/drivers/";
+    var link = Uri.parse(profileLink);
+    http.Response response = await http.get(link, headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "Authorization": "Token $token"
+    });
+    if (response.statusCode == 200) {
+      var jsonData = jsonDecode(response.body);
+      allDrivers.assignAll(jsonData);
       update();
     } else {
       if (kDebugMode) {
